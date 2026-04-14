@@ -1,0 +1,45 @@
+formatter: markdown table
+version: "0.16.0"
+
+sections:
+  show:
+    - requirements
+    - providers
+    - inputs
+    - outputs
+
+content: |-
+  # Terraform AWS Security Hub Outbound Module
+
+  Terraform module that integrates the Lacework FortiCNAPP platform with AWS Security Hub.
+  Lacework events flow into a dedicated EventBridge bus, an SQS queue buffers them, and a
+  Lambda function transforms each event into an AWS Security Finding Format (ASFF) record
+  and publishes it to Security Hub via `BatchImportFindings`.
+
+  This module creates:
+  - A dedicated EventBridge bus, rule, and bus policy granting the Lacework AWS account `events:PutEvents`
+  - An SQS queue (and access policy) that buffers events and triggers the Lambda
+  - A Go Lambda (`provided.al2023`) that transforms events and calls `securityhub:BatchImportFindings`
+  - IAM role and policies for the Lambda (SQS read + Security Hub import)
+  - A Lacework CloudWatch alert channel and alert rule that send events to the new bus
+
+  ## Usage Examples
+  See the [examples/](./examples/) directory for complete usage examples.
+
+  {{ .Requirements }}
+
+  {{ .Providers }}
+
+  {{ .Inputs }}
+
+  {{ .Outputs }}
+
+output:
+  file: README.md
+  mode: replace
+
+settings:
+  anchor: false
+  default: true
+  required: true
+  type: true
