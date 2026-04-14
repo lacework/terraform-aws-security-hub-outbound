@@ -28,8 +28,8 @@ See the [examples/](./examples/) directory for complete usage examples.
 
 | Name | Version |
 |------|---------|
-| aws | 6.40.0 |
-| lacework | 2.3.0 |
+| aws | ~> 6.0 |
+| lacework | ~> 2.3 |
 
 ## Inputs
 
