@@ -5,6 +5,11 @@
   
   Please read the contribution document: https://github.com/lacework/terraform-aws-security-hub-outbound/blob/main/CONTRIBUTING.md
 --->
+## Jira Ticket
+
+<!--
+ Please add the Jira ticket #
+-->
 
 ## Summary
 
