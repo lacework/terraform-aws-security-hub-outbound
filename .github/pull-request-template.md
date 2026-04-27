@@ -5,10 +5,11 @@
   
   Please read the contribution document: https://github.com/lacework/terraform-aws-security-hub-outbound/blob/main/CONTRIBUTING.md
 --->
-## Jira Ticket
+
+## Jira Ticket (required)
 
 <!--
- Please add the Jira ticket #
+  Link the Jira ticket this PR addresses, e.g. https://lacework.atlassian.net/browse/CAD-XXXX
 -->
 
 ## Summary
@@ -22,10 +23,4 @@
 <!--
   How exactly did you verify that your PR solves the issue you wanted to solve?
   Include any other relevant information such as how to use the new functionality, screenshots, etc.
--->
-
-## Issue
-
-<!--
-  Include the link to a Jira/Github issue
 -->
