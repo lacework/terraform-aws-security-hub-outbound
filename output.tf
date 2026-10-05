@@ -23,6 +23,16 @@ output "sqs_queue_url" {
   value       = aws_sqs_queue.events.id
 }
 
+output "sqs_dlq_arn" {
+  description = "ARN of the SQS dead-letter queue holding events that failed to import after 5 deliveries."
+  value       = aws_sqs_queue.dead_letter.arn
+}
+
+output "sqs_dlq_url" {
+  description = "URL of the SQS dead-letter queue holding events that failed to import after 5 deliveries."
+  value       = aws_sqs_queue.dead_letter.id
+}
+
 output "lambda_function_arn" {
   description = "ARN of the Lambda function that transforms events and publishes to Security Hub."
   value       = aws_lambda_function.integration.arn

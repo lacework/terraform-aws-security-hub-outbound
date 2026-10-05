@@ -8,7 +8,7 @@ and publishes it to Security Hub via `BatchImportFindings`.
 
 This module creates:
 - A dedicated EventBridge bus, rule, and bus policy granting the Lacework AWS account `events:PutEvents`
-- An SQS queue (and access policy) that buffers events and triggers the Lambda
+- An SQS queue (and access policy) that buffers events and triggers the Lambda, plus a dead-letter queue that keeps events still failing to import after 5 deliveries
 - A Go Lambda (`provided.al2023`) that transforms events and calls `securityhub:BatchImportFindings`
 - IAM role and policies for the Lambda (SQS read + Security Hub import)
 - A Lacework CloudWatch alert channel and alert rule that send events to the new bus
@@ -63,6 +63,8 @@ See the [examples/](./examples/) directory for complete usage examples.
 | lambda\_function\_arn | ARN of the Lambda function that transforms events and publishes to Security Hub. |
 | lambda\_function\_name | Name of the Lambda function. |
 | lambda\_role\_arn | ARN of the IAM role the Lambda assumes. |
+| sqs\_dlq\_arn | ARN of the SQS dead-letter queue holding events that failed to import after 5 deliveries. |
+| sqs\_dlq\_url | URL of the SQS dead-letter queue holding events that failed to import after 5 deliveries. |
 | sqs\_queue\_arn | ARN of the SQS queue buffering events for the Lambda. |
 | sqs\_queue\_url | URL of the SQS queue buffering events for the Lambda. |
 <!-- END_TF_DOCS -->
