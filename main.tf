@@ -11,6 +11,7 @@ locals {
   event_bus_name       = "${local.name_prefix}-event-bus"
   event_rule_name      = "${local.name_prefix}-event-rule"
   sqs_queue_name       = "${local.name_prefix}-event-queue"
+  sqs_dlq_name         = "${local.name_prefix}-event-dlq"
   lambda_function_name = "${local.name_prefix}-integration"
   lambda_role_name     = "${local.name_prefix}-role"
 }
@@ -85,12 +86,25 @@ resource "aws_iam_role_policy_attachment" "lambda_batch_import_findings" {
   policy_arn = aws_iam_policy.batch_import_findings.arn
 }
 
+# Events that still fail to import after 5 deliveries, kept for inspection and redrive
+resource "aws_sqs_queue" "dead_letter" {
+  name                      = local.sqs_dlq_name
+  message_retention_seconds = 1209600
+  tags                      = var.tags
+}
+
 # SQS queue buffering events for the Lambda
 resource "aws_sqs_queue" "events" {
   name                      = local.sqs_queue_name
   delay_seconds             = 0
   message_retention_seconds = var.sqs_message_retention_seconds
-  tags                      = var.tags
+  # AWS recommends at least 6x the function timeout so a throttled batch can be retried before SQS redelivers it
+  visibility_timeout_seconds = 6 * var.lambda_timeout
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.dead_letter.arn
+    maxReceiveCount     = 5
+  })
+  tags = var.tags
 }
 
 data "aws_iam_policy_document" "sqs_from_events" {
@@ -141,6 +155,8 @@ resource "aws_lambda_function" "integration" {
 resource "aws_lambda_event_source_mapping" "sqs_to_lambda" {
   event_source_arn = aws_sqs_queue.events.arn
   function_name    = aws_lambda_function.integration.arn
+  # The Lambda reports events it could not import; only those return to the queue
+  function_response_types = ["ReportBatchItemFailures"]
 }
 
 # Custom EventBridge bus receiving events from Lacework
